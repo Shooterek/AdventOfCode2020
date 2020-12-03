@@ -6,12 +6,11 @@ namespace AdventOfCode2020
     {
         static void Main(string[] args)
         {
-            var day = new Day1("./Input/day1.txt");
+            var day = new Day3("./Input/day3.txt");
             var result = day.FirstTask();
-
-            
-            var result2 = day.SecondTask();
             Console.WriteLine(result);
+
+            var result2 = day.SecondTask();
             Console.WriteLine(result2);
         }
     }
