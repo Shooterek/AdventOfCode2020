@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -14,5 +15,12 @@ public class InputLoader{
         }
 
         return input;
+    }
+
+    public List<string> LoadStringBatches(string filepath){
+        var batches = File.ReadAllText(filepath).Split(new string[] { "\r\n\r\n" },
+            StringSplitOptions.RemoveEmptyEntries).Select(batch => batch.Replace('\n', ' '));
+
+        return batches.ToList();    
     }
 }
