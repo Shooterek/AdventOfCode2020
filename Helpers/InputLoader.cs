@@ -5,7 +5,8 @@ using System.Linq;
 
 public class InputLoader{
     public List<string> LoadStringListInput(string filepath){
-        return File.ReadAllLines(filepath).ToList();
+        return File.ReadAllLines(filepath)
+            .ToList();
     }
 
     public List<int> LoadIntListInput(string filepath){
@@ -18,9 +19,10 @@ public class InputLoader{
     }
 
     public List<string> LoadStringBatches(string filepath){
-        var batches = File.ReadAllText(filepath).Split(new string[] { "\r\n\r\n" },
-            StringSplitOptions.RemoveEmptyEntries).Select(batch => batch.Replace('\n', ' '));
-
-        return batches.ToList();    
+        var batches = File.ReadAllText(filepath)
+            .Split(new string[] { "\r\n\r\n" }, StringSplitOptions.RemoveEmptyEntries)
+            .Select(batch => batch.Replace('\n', ' '))
+            .ToList();
+        return batches;    
     }
 }
