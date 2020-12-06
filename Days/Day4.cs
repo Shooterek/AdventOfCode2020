@@ -63,26 +63,23 @@ public class Day4 : Day
     private bool CheckPassportData(Dictionary<string, string> dict){
         var eyeColors = new List<string>(){"amb", "blu", "brn", "gry", "grn", "hzl", "oth"};
         foreach(var entry in dict){
-            var value = Regex.Replace(entry.Value, @"\s+", "");
+            var value = entry.Value.RemoveWhitespaceCharacters();
             switch (entry.Key)
             {
                 case "byr":
-                    int birthYear = Int32.Parse(value);
-                    if(birthYear > 2002 || birthYear < 1920){
+                    if(!IntegerValueBetween(int.Parse(value), 1920, 2002)){
                         return false;
                     }
                     break;
 
                 case "iyr":
-                    int issueYear = Int32.Parse(value);
-                    if(issueYear > 2020 || issueYear < 2010){
+                    if(!IntegerValueBetween(int.Parse(value), 2010, 2020)){
                         return false;
                     }
                     break;
 
                 case "eyr":
-                    int expirationYear = Int32.Parse(value);
-                    if(expirationYear > 2030 || expirationYear < 2020){
+                    if(!IntegerValueBetween(int.Parse(value), 2020, 2030)){
                         return false;
                     }
                     break;
@@ -112,6 +109,14 @@ public class Day4 : Day
                     break;
             }
         }
+        return true;
+    }
+
+    private bool IntegerValueBetween(int value, int min, int max){
+        if(value > max || value < min){
+            return false;
+        }
+
         return true;
     }
 }
