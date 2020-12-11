@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 public class Day10 : Day
 {
@@ -18,13 +19,15 @@ public class Day10 : Day
     public override string SecondTask()
     {
         var input = _inputLoader.LoadIntListInput(_inputPath);
+        input.Add(0);
+        input.Add(input.Max() + 3);
         input.Sort();
 
         return GetAllArrangements(input).ToString();
     }
 
 
-    //One three jolts difference comes from one adapter, which is always 3 jolts stronger than the strongest adapter from the list.
+    //One three jolts adapater difference comes from one adapter, which is always 3 jolts stronger than the strongest adapter from the list.
     private long GetProductOfOneAndThreeJoltsAdapters(List<int> adapters){
         
         int oneJoltDifferenceCounter = 0;
@@ -46,26 +49,42 @@ public class Day10 : Day
     }
 
     private long GetAllArrangements(List<int> adapters){
-        long counter = 0;
+        long counter = 1;
 
-        for(int i = 0; i < adapters.Count; i+= 3){
-            var possibleMoves = CountPossibleMoves(adapters, i);
-            var posMOves2 = CountPossibleMoves(adapters, i + 1);
-            Console.WriteLine(counter);
-            counter += possibleMoves * posMOves2;
+        var requiredAdaptersIndexes = GetRequiredAdaptersIndexes(adapters);
+        var lengthsOfSubsets = new List<int>();
+        for(int i = 0; i < requiredAdaptersIndexes.Count - 1; i+= 2){
+            lengthsOfSubsets.Add(requiredAdaptersIndexes[i + 1] - requiredAdaptersIndexes[i] + 1);
         }
 
+        for(int j = 0; j < lengthsOfSubsets.Count; j++){
+            if(lengthsOfSubsets[j] == 3){
+                counter *= 2;
+            }
+            else if(lengthsOfSubsets[j] == 4){
+                counter *= 4;
+            }
+            else if(lengthsOfSubsets[j] == 5){
+                counter *= 7;
+            }
+        }
         return counter;
     }
 
-    private int CountPossibleMoves(List<int> adapters, int startingIndex){
-        var temp = 0;
-        for(int j = 0; j < 3 && startingIndex + j < adapters.Count; j++){
-            if(adapters[startingIndex + j] - adapters[startingIndex] <= 3){
-                temp++;
+    private List<int> GetRequiredAdaptersIndexes(List<int> adapters)
+    {
+        var indexes = new List<int>();
+        var currentJoltage = -9999;
+        
+        for(int i = 0; i < adapters.Count - 1; i++){
+            if(adapters[i + 1] - currentJoltage > 3){
+                currentJoltage = adapters[i];
+                indexes.Add(i);
+                Console.WriteLine(adapters[i]);
             }
         }
+        indexes.Add(adapters.Count - 1);
 
-        return temp;
+        return indexes;
     }
 }
