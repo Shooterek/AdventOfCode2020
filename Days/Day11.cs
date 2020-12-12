@@ -20,19 +20,11 @@ public class Day11 : Day
             seats[i] = input[i].ToCharArray();
         }
 
-
         bool isChange = true;
-
         while(isChange){
-            var temp = new char[linesCount][];
-            for(int i = 0; i < seats.Length; i++){
-                temp[i] = new char[lineLength];
-                for(int j = 0; j < lineLength; j++){
-                    temp[i][j] = seats[i][j];
-                }
-            }
-
+            var temp = CopyArrayOfCharArrays(seats);
             isChange = false;
+
             for(int y = 0; y < linesCount; y++){
                 for(int x = 0; x < lineLength; x++){
                     if(temp[y][x] != _floor){
@@ -54,15 +46,8 @@ public class Day11 : Day
             }
         }
 
-        var counter = 0;
-        for(int i = 0; i < seats.Length; i++){
-            for(int j = 0; j < lineLength; j++){
-                if(seats[i][j] == _occupiedSeat){
-                    counter++;
-                }
-            }
-        }
-        return counter.ToString();
+        var occupiedSeats = CountOccupiedSeats(seats);
+        return occupiedSeats.ToString();
     }
 
 
@@ -77,18 +62,11 @@ public class Day11 : Day
             seats[i] = input[i].ToCharArray();
         }
 
-
         bool isChange = true;
         while(isChange){
-            var temp = new char[linesCount][];
-            for(int i = 0; i < seats.Length; i++){
-                temp[i] = new char[lineLength];
-                for(int j = 0; j < lineLength; j++){
-                    temp[i][j] = seats[i][j];
-                }
-            }
-
+            var temp = CopyArrayOfCharArrays(seats);
             isChange = false;
+
             for(int y = 0; y < linesCount; y++){
                 for(int x = 0; x < lineLength; x++){
                     if(temp[y][x] != _floor){
@@ -110,25 +88,45 @@ public class Day11 : Day
             }
         }
 
+        var occupiedSeats = CountOccupiedSeats(seats);
+        return occupiedSeats.ToString();
+    }
+
+    private char[][] CopyArrayOfCharArrays(char[][] seats)
+    {
+        var copy = new char[seats.Length][];
+        for(int i = 0; i < seats.Length; i++){
+            copy[i] = new char[seats[0].Length];
+            for(int j = 0; j < seats[0].Length; j++){
+                copy[i][j] = seats[i][j];
+            }
+        }
+
+        return copy;
+    }
+
+    private int CountOccupiedSeats(char[][] seats)
+    {
         var counter = 0;
         for(int i = 0; i < seats.Length; i++){
-            for(int j = 0; j < lineLength; j++){
+            for(int j = 0; j < seats[0].Length; j++){
                 if(seats[i][j] == _occupiedSeat){
                     counter++;
                 }
             }
         }
-        return counter.ToString();
+
+        return counter;
     }
+
     private int CountOccupiedAdjacentSeats(char[][] seats, int x, int y)
     {
         var counter = 0;
         for(int i = x - 1; i < x + 2; i++){
             for(int j = y - 1; j < y + 2; j++){
-                if(i == x && j == y){
-                    continue;
+                if(i != x || j != y){
+                    counter += CheckIfSeatIsOccupied(seats, i, j);
                 }
-                counter += CheckIfSeatIsOccupied(seats, i, j);
             }
         }
 
@@ -147,14 +145,13 @@ public class Day11 : Day
     private int CountOccupiedSeatsInAllDirections(char[][] seats, int x, int y)
     {
         var counter = 0;
-        counter += CheckDirection(seats, x, y, -1, -1);
-        counter += CheckDirection(seats, x, y, -1, 0);
-        counter += CheckDirection(seats, x, y, -1, 1);
-        counter += CheckDirection(seats, x, y, 0, 1);
-        counter += CheckDirection(seats, x, y, 0, -1);
-        counter += CheckDirection(seats, x, y, 1, -1);
-        counter += CheckDirection(seats, x, y, 1, 0);
-        counter += CheckDirection(seats, x, y, 1, 1);
+        for(int i = -1; i <= 1; i++){
+            for(int j = -1; j <= 1; j++){
+                if(i != 0 || j != 0){
+                    counter += CheckDirection(seats, x, y, i, j);
+                }
+            }
+        }
 
         return counter;
     }
