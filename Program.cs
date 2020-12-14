@@ -6,7 +6,7 @@ namespace AdventOfCode2020
     {
         static void Main(string[] args)
         {
-            var day = new Day13("./Input/day13.txt");
+            var day = new Day14("./Input/day14.txt");
             var result = day.FirstTask();
             Console.WriteLine(result);
 
