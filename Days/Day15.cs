@@ -11,8 +11,6 @@ public class Day15 : Day
 
     public override string FirstTask()
     {
-        Stopwatch sw = new Stopwatch();
-        sw.Start();
         var input = new List<int>(){
             19,20,14,0,9,1
         };
@@ -61,15 +59,11 @@ public class Day15 : Day
             }
             counter++;
         }
-        sw.Stop();
-        Console.WriteLine(sw.Elapsed);
         return spokenNumber.ToString();
     }
 
     public override string SecondTask()
     {
-        Stopwatch sw = new Stopwatch();
-        sw.Start();
         var input = new List<int>(){
             19,20,14,0,9,1
         };
@@ -118,8 +112,6 @@ public class Day15 : Day
             }
             counter++;
         }
-        sw.Stop();
-        Console.WriteLine(sw.Elapsed);
         return spokenNumber.ToString();
     }
 }
