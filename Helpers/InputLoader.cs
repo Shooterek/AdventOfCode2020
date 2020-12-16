@@ -35,4 +35,49 @@ public class InputLoader{
             .ToList();
         return batches;    
     }
+
+    public TrainTicketInput LoadTicketRules(string filepath){
+        var lines = File.ReadAllLines(filepath);
+        var rules = new List<TicketRule>();
+        var myTicketIndex = 0;
+        var trainTicketInput = new TrainTicketInput();
+        for(int i = 0; i < lines.Length; i++){
+            var line = lines[i];
+            if(line.Length == 0){
+                myTicketIndex = i + 2;
+                break;
+            }
+            var parts = line.Split(':');
+            var propertyName = parts[0];
+            var ticketRule = new TicketRule(propertyName);
+            foreach(var rule in parts[1].Split("or")){
+                var values = rule.Split('-');
+                var minValue = Int32.Parse(values[0]);
+                var maxValue = Int32.Parse(values[1]);
+                ticketRule.PropertyValidRanges.Add(new PropertyValueRange(minValue, maxValue));
+            }
+            rules.Add(ticketRule);
+        }
+
+        var myTicketValues = new List<int>();
+        foreach(var value in lines[myTicketIndex].Split(',')){
+            myTicketValues.Add(Int32.Parse(value));
+        }
+
+        var nearbyTickets = new List<List<int>>();
+        for(int i = myTicketIndex + 3; i < lines.Length; i++){
+            var ticketValuesLine = new List<int>();
+            var line = lines[i];
+            foreach(var value in line.Split(',')){
+                ticketValuesLine.Add(Int32.Parse(value));
+            }
+            nearbyTickets.Add(ticketValuesLine);
+        }
+
+        trainTicketInput.NearbyTickets = nearbyTickets;
+        trainTicketInput.TicketRules = rules;
+        trainTicketInput.MyTicket = myTicketValues;
+
+        return trainTicketInput;
+    }
 }
