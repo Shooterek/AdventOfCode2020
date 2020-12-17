@@ -22,8 +22,33 @@ public class Day10 : Day
         input.Add(0);
         input.Add(input.Max() + 3);
         input.Sort();
-
-        return GetAllArrangements(input).ToString();
+        var currentJoltage = input[0];
+        var length = 0;
+        var dict = new Dictionary<int, int>();
+        dict[2] = 0;
+        dict[4] = 0;
+        dict[7] = 0;
+        for(int i = 1; i < input.Count; i++){
+            if(input[i] - currentJoltage == 1){
+                length++;
+            }
+            else{
+                if(length == 4){
+                    dict[7] += 1;
+                }
+                else if(length == 3){
+                    dict[4] += 1;
+                }
+                else if(length == 2){
+                    dict[2] += 1;
+                }
+                length = 0;
+            }
+            currentJoltage = input[i];
+        }
+        
+        double result = Math.Pow(2, dict[2]) * Math.Pow(4, dict[4]) * Math.Pow(7, dict[7]);
+        return result.ToString();
     }
 
 
@@ -51,21 +76,23 @@ public class Day10 : Day
     private long GetAllArrangements(List<int> adapters){
         long counter = 1;
 
-        var requiredAdaptersIndexes = GetRequiredAdaptersIndexes(adapters);
-        var lengthsOfSubsets = new List<int>();
-        for(int i = 0; i < requiredAdaptersIndexes.Count - 1; i+= 2){
-            lengthsOfSubsets.Add(requiredAdaptersIndexes[i + 1] - requiredAdaptersIndexes[i] + 1);
+        for(int i = 0; i < adapters.Count; i++){
+            Console.Write(adapters[i] + " ");
         }
-
-        for(int j = 0; j < lengthsOfSubsets.Count; j++){
-            if(lengthsOfSubsets[j] == 3){
-                counter *= 2;
-            }
-            else if(lengthsOfSubsets[j] == 4){
-                counter *= 4;
-            }
-            else if(lengthsOfSubsets[j] == 5){
-                counter *= 7;
+        Console.Write(Environment.NewLine);
+        var requiredAdaptersIndexes = GetRequiredAdaptersIndexes(adapters);
+        for(int i = 0; i < adapters.Count;){
+            for(int j = 0; j < 4 && j + i < adapters.Count; j++){
+                if(requiredAdaptersIndexes.Contains(i + j)){
+                    i += j == 0 ? 1 : j;
+                    if(j == 2){
+                        counter *= 4;
+                    }
+                    else if(j == 1){
+                        counter *= 2;
+                    }
+                    break;
+                }
             }
         }
         return counter;
@@ -80,9 +107,10 @@ public class Day10 : Day
             if(adapters[i + 1] - currentJoltage > 3){
                 currentJoltage = adapters[i];
                 indexes.Add(i);
-                Console.WriteLine(adapters[i]);
+                Console.Write(adapters[i] + " ");
             }
         }
+        Console.Write(Environment.NewLine);
         indexes.Add(adapters.Count - 1);
 
         return indexes;
