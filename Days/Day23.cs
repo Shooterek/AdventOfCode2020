@@ -75,7 +75,7 @@ public class Day23 : Day
                 return _lookUpArray[j];
             }
         }
-        return _lookUpArray[f.Value - 4];
+        return null;
     }
     public override string SecondTask()
     {
