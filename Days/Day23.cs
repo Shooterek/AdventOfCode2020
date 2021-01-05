@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+using System.Text;
 
 public class Day23 : Day
 {
@@ -34,13 +33,13 @@ public class Day23 : Day
         }
 
         f = f.Next;
+        var resultBuilder = new StringBuilder();
         for(int j = 0; j < 8; j++){
-            Console.Write(f.Value);
+            resultBuilder.Append(f.Value);
             f = f.Next;
         }
-        Console.WriteLine();
 
-        return "";
+        return resultBuilder.ToString();
     }
 
     private void PlayOneRound(CircularLinkedList<int> linkedList, CircularLinkedListNode<int> f, int maxValue)
@@ -79,8 +78,6 @@ public class Day23 : Day
     }
     public override string SecondTask()
     {
-        var sw = new Stopwatch();
-        sw.Start();
         var maxValue = 1000000;
         _lookUpArray = new CircularLinkedListNode<int>[maxValue + 1];
         var input = _inputLoader.LoadStringListInput(_inputPath);
@@ -106,7 +103,6 @@ public class Day23 : Day
         while(f.Value != 1){
             f = f.Next;
         }
-        Console.WriteLine(sw.ElapsedMilliseconds);
         long result = (long)f.Next.Value * (long)f.Next.Next.Value;
         return result.ToString();
     }
