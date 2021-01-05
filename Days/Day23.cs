@@ -5,23 +5,27 @@ using System.Linq;
 
 public class Day23 : Day
 {
+    private CircularLinkedListNode<int>[] _lookUpArray;
     public Day23(string inputPath) : base(inputPath)
     {
     }
 
     public override string FirstTask()
     {
+        var maxValue = 9;
+        _lookUpArray = new CircularLinkedListNode<int>[maxValue + 1];
         var input = _inputLoader.LoadStringListInput(_inputPath);
         var line = input[0];
 
         var linkedList = new CircularLinkedList<int>();
         foreach(var ch in line.ToCharArray()){
-            linkedList.Insert((int)Char.GetNumericValue(ch));
+            var node = linkedList.Insert((int)Char.GetNumericValue(ch));
+            _lookUpArray[node.Value] = node;
         }
         var f = linkedList.Head;
         var maxMoves = 100;
         for(int i = 0; i < maxMoves; i++){
-            PlayOneRound(linkedList, f);
+            PlayOneRound(linkedList, f, maxValue);
             f = f.Next;
         }
 
@@ -39,10 +43,9 @@ public class Day23 : Day
         return "";
     }
 
-    private void PlayOneRound(CircularLinkedList<int> linkedList, CircularLinkedListNode<int> f)
+    private void PlayOneRound(CircularLinkedList<int> linkedList, CircularLinkedListNode<int> f, int maxValue)
     {
-        CircularLinkedListNode<int> dest = FindDestinationCup(f);
-        // Console.WriteLine("VALUE: " + f.Value + "&&& DEST: " + dest.Value);
+        CircularLinkedListNode<int> dest = FindDestinationCup2(f, maxValue);
         var currentNode = f;
         var firstCupToSwap = f.Next;
         var lastCupToSwap = f.Next.Next.Next;
@@ -58,101 +61,53 @@ public class Day23 : Day
         t.Previous = lastCupToSwap;
     }
 
-    private CircularLinkedListNode<int> FindDestinationCup(CircularLinkedListNode<int> f)
+    private CircularLinkedListNode<int> FindDestinationCup2(CircularLinkedListNode<int> f, int maxValue)
     {
-        var sw = new Stopwatch();
-        CircularLinkedListNode<int> destinationCup = null;
-        var temp = f.Next;
-        var currentCupValue = f.Value;
-        var nextCupValue = f.Value - 1;
-        var counter = 1;
-
-        sw.Start();
-
-        var t = f.Next.Next.Next.Next;
-        var min = Int32.MaxValue;
-        while(t.Value != f.Value){
-            if(t.Value < min){
-                min = t.Value;
+        var list = new List<int>(){f.Next.Value, f.Next.Next.Value, f.Next.Next.Next.Value};
+        for(int i = 1; i < 5; i++){
+            if(f.Value - i >= 1 && !list.Contains(f.Value - i)){
+                return _lookUpArray[f.Value - i];
             }
-            t = t.Next;
         }
 
-        sw.Stop();
-        Console.WriteLine(sw.Elapsed.Milliseconds);
-
-        sw.Reset();
-        sw.Start();
-        while(destinationCup == null && nextCupValue >= min){
-            if(temp.Value == nextCupValue){
-                if(counter <= 3){
-                    nextCupValue--;
-                    temp = f;
-                    counter = 0;
-                }
-                else{
-                    destinationCup = temp;
-                }
+        for(int j = maxValue; j > 0; j--){
+            if(!list.Contains(j)){
+                return _lookUpArray[j];
             }
-            counter++;
-            temp = temp.Next;
         }
-        
-        sw.Stop();
-        Console.WriteLine(sw.Elapsed.Milliseconds);
-        sw.Reset();
-        sw.Start();
-        if(nextCupValue < min){
-            CircularLinkedListNode<int> maxNode = null;
-            var max = -1;
-            var t2 = f.Next.Next.Next.Next;
-            while(t2.Value != f.Value){
-                if(t2.Value > max){
-                    max = t2.Value;
-                    maxNode = t2;
-                }
-                t2 = t2.Next;
-            }
-            return maxNode;
-        }
-        
-        sw.Stop();
-        Console.WriteLine(sw.Elapsed.Milliseconds);
-        Console.WriteLine("NEXT");
-
-        return destinationCup;
+        return _lookUpArray[f.Value - 4];
     }
     public override string SecondTask()
     {
+        var sw = new Stopwatch();
+        sw.Start();
+        var maxValue = 1000000;
+        _lookUpArray = new CircularLinkedListNode<int>[maxValue + 1];
         var input = _inputLoader.LoadStringListInput(_inputPath);
         var line = input[0];
 
         var linkedList = new CircularLinkedList<int>();
         foreach(var ch in line.ToCharArray()){
-            linkedList.Insert((int)Char.GetNumericValue(ch));
+            var node = linkedList.Insert((int)Char.GetNumericValue(ch));
+            _lookUpArray[node.Value] = node;
         }
-        for(int i = 10; i <= 1000000; i++){
-            linkedList.Insert(i);
+        for(int i = 10; i <= maxValue; i++){
+            _lookUpArray[i]=linkedList.Insert(i);
         }
+        
         var f = linkedList.Head;
         var maxMoves = 10000000;
         for(int i = 0; i < maxMoves; i++){
-           Console.WriteLine(i);
-            PlayOneRound(linkedList, f);
+            PlayOneRound(linkedList, f, maxValue);
             f = f.Next;
         }
 
+        f = linkedList.Head;
         while(f.Value != 1){
             f = f.Next;
         }
-
-        f = f.Next;
-        for(int j = 0; j < 8; j++){
-            Console.Write(f.Value);
-            f = f.Next;
-        }
-        Console.WriteLine();
-
-        return "";
+        Console.WriteLine(sw.ElapsedMilliseconds);
+        long result = (long)f.Next.Value * (long)f.Next.Next.Value;
+        return result.ToString();
     }
 }

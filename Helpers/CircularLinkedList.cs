@@ -5,7 +5,7 @@ public class CircularLinkedList<T>{
     }
     public CircularLinkedListNode<T> Head { get; set; }
 
-    public void Insert(T value){
+    public CircularLinkedListNode<T> Insert(T value){
         var node = new CircularLinkedListNode<T>(value);
         if(Head == null){
             node.Next = node;
@@ -18,5 +18,7 @@ public class CircularLinkedList<T>{
             Head.Previous.Next = node;
             Head.Previous = node;
         }
+
+        return node;
     }
 }
